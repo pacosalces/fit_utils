@@ -151,7 +151,7 @@ def model_shaded_uncertainty(
     if columns_normalised:
         probability = np.exp(-((Y - Model_Mean) ** 2) / (2 * Model_Stddev**2))
     else:
-        probability = np.normpdf(Y, Model_Mean, Model_Stddev)
+        probability = stats.norm(Model_Mean, Model_Stddev).pdf(Y)
     #    probability = (abs(Y - Model_Mean)/Model_Stddev).clip(0,3)
     return probability, [x.min(), x.max(), y.min(), y.max()]
 
@@ -342,7 +342,9 @@ def ramsey(t, q, A, f, tc, c=0, phi=0):
     )
 
 
-def waist(z, z0, w0, wavelength, Msquared):
+def waist(z, z0, w0, wavelength):
+    # Assume M^2 = 1, since it's degenerate with wavelength anyways
+    # otherwise zR = np.pi * (Msq**2 * w0)**2 / wavelength
     z = z - z0
-    zR = np.pi * (Msquared * w0) ** 2 / wavelength
+    zR = np.pi * w0**2 / wavelength
     return w0 * np.sqrt(1 + (z / zR) ** 2)
